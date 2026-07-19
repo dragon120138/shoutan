@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>手谈 · 牌桌棋桌酒桌策略图谱</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============ 顶栏 ============ -->
+<div id="topbar">
+  <span class="logo">♟ 手谈</span>
+  <span class="ver">v3.0</span>
+  <nav id="tabs">
+    <button class="tab active" data-tab="graph">🌳 资料速查</button>
+    <button class="tab" data-tab="generate">🎯 一键生成</button>
+    <button class="tab" data-tab="chat">💬 咨询模式</button>
+    <button class="tab" data-tab="about">📖 说明</button>
+    <button class="tab" data-tab="settings">⚙ 设置</button>
+  </nav>
+  <div id="api-badge" class="no"><span class="dot"></span><span id="api-text">未配置</span></div>
+</div>
+
+<!-- ============ 主区 ============ -->
+<div id="app">
+
+  <!-- ====== Tab 1: 资料速查（左树+右详情，两段式）====== -->
+  <div id="tab-graph" class="tab-pane active">
+    <div id="tree-panel">
+      <div class="tree-header">
+        <span>资料速查图谱</span>
+        <span class="hint">点击节点看速讲 · 再点按钮 AI 深解</span>
+      </div>
+      <div class="tree-search"><input id="tree-search-input" placeholder="🔍 搜索节点..." /></div>
+      <div id="tree-body"></div>
+    </div>
+    <div id="detail-panel">
+      <div id="detail-empty" class="detail-empty">
+        <div class="icon">🌳</div>
+        <h3>点击左侧节点开始</h3>
+        <p>每个节点含：速讲（秒出）· 场景关联 · 关键词 · AI 深度解读（按需）</p>
+        <p class="muted">四大类：棋牌规则 / 高阶战术 / 人情规矩 / 场景位阶</p>
+      </div>
+      <div id="detail-content" class="hidden"></div>
+    </div>
+  </div>
+
+  <!-- ====== Tab 2: 一键生成 ====== -->
+  <div id="tab-generate" class="tab-pane">
+    <div class="content-wrap">
+      <h2>🎯 一键生成「今晚怎么打」</h2>
+      <p class="subtitle">选好三参数 + 说清背景 → 一个按钮出具体策略（分阶段动作 + 话术）</p>
+
+      <div class="param-grid">
+        <div class="param-cell">
+          <label>场景</label>
+          <select id="gen-scene" class="ink-select">
+            <option value="">— 请择 —</option>
+            <option value="纯政内部">纯政内部</option>
+            <option value="纯商内部">纯商内部</option>
+            <option value="政→商">政→商</option>
+            <option value="商→政">商→政</option>
+            <option value="学→政">学→政</option>
+            <option value="政→学">政→学</option>
+            <option value="学→商">学→商</option>
+            <option value="商→学">商→学</option>
+          </select>
+        </div>
+        <div class="param-cell">
+          <label>游戏</label>
+          <select id="gen-game" class="ink-select">
+            <option value="">— 请择 —</option>
+            <option>掼蛋</option><option>德州扑克</option><option>桥牌</option>
+            <option>保皇</option><option>麻将</option><option>围棋</option>
+            <option>象棋</option><option>酒桌</option>
+          </select>
+        </div>
+        <div class="param-cell">
+          <label>位阶</label>
+          <select id="gen-rank" class="ink-select">
+            <option value="">— 请择 —</option>
+            <option>下位</option><option>平位</option><option>上位</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bg-box">
+        <label>背景补充 <span class="hint">（越具体越准）</span></label>
+        <textarea id="gen-bg" rows="3" placeholder="例：今晚第一次陪，主家是省里退下来的老领导，4人掼蛋，我手气一般"></textarea>
+      </div>
+
+      <div class="quick-chips">
+        <button class="chip" data-bg="今晚第一次陪领导打牌，心里没底">第一次陪</button>
+        <button class="chip" data-bg="和潜在晋升竞争对手同局">平级竞争</button>
+        <button class="chip" data-bg="商务宴请，客户是国企领导">商务宴请</button>
+        <button class="chip" data-bg="学术圈沙龙后的饭局">学术饭局</button>
+      </div>
+
+      <button id="gen-btn" class="btn-primary big">🎯 生成今晚策略</button>
+
+      <div id="gen-result" class="result-box">
+        <div class="placeholder">策略方案将显示在这里</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== Tab 3: 咨询模式 ====== -->
+  <div id="tab-chat" class="tab-pane">
+    <div class="content-wrap">
+      <h2>💬 咨询模式</h2>
+      <p class="subtitle">不受三参数约束 · 自由提问 · RAG + 通用知识兜底（标注来源）</p>
+
+      <div id="chat-history" class="chat-history">
+        <div class="chat-msg system">
+          <div class="chat-content">
+            <p>问什么都行：牌规、战术、人情、酒桌、具体情境处置。</p>
+            <p class="muted">回答会标注「知识库说」vs「通用知识说」，便于你掂量。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-bar">
+        <textarea id="chat-input" rows="2" placeholder="问点具体的，比如：掼蛋进贡进哪张？酒桌怎么拒头孢？"></textarea>
+        <button id="chat-btn" class="btn-primary">发送 →</button>
+      </div>
+      <div class="chat-hint">Ctrl+Enter 发送 · 多轮对话保留最近 8 轮</div>
+    </div>
+  </div>
+
+  <!-- ====== Tab 4: 说明 ====== -->
+  <div id="tab-about" class="tab-pane">
+    <div class="content-wrap about-wrap">
+      <h2>📖 关于手谈</h2>
+      <div id="about-content"></div>
+    </div>
+  </div>
+
+  <!-- ====== Tab 5: 设置 ====== -->
+  <div id="tab-settings" class="tab-pane">
+    <div class="content-wrap">
+      <h2>⚙ 接入设置</h2>
+      <p class="subtitle">你的 Key 只存在浏览器 localStorage，请求时带给后端转发，绝不入库、不上传。</p>
+
+      <div class="settings-form">
+        <label>API Key</label>
+        <input id="set-apikey" type="password" class="ink-input" placeholder="sk-..." />
+
+        <label>接口地址</label>
+        <input id="set-baseurl" class="ink-input" placeholder="https://open.bigmodel.cn/api/paas/v4/" />
+
+        <label>模型</label>
+        <input id="set-model" class="ink-input" placeholder="glm-5.2" />
+
+        <div class="presets">
+          <button class="preset" data-base="https://open.bigmodel.cn/api/paas/v4/" data-model="glm-5.2">智谱 GLM-5.2（推荐）</button>
+          <button class="preset" data-base="https://api.openai.com/v1/" data-model="gpt-4o">OpenAI</button>
+          <button class="preset" data-base="https://api.deepseek.com/v1" data-model="deepseek-chat">DeepSeek</button>
+        </div>
+
+        <button id="set-save" class="btn-primary">💾 保存并验证</button>
+        <div id="set-status" class="set-status"></div>
+
+        <div class="key-tip">
+          <p>💡 <b>智谱 GLM</b>（推荐，有免费额度）：<a href="https://bigmodel.cn" target="_blank">bigmodel.cn</a> 注册 → 控制台 → API Keys</p>
+          <p>任何兼容 OpenAI <code>/chat/completions</code> 协议的接口都能用（含自部署 vLLM/Ollama）。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
